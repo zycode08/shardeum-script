@@ -190,6 +190,35 @@ if [ ! -z "${CONTAINER_ID}" ]; then
     echo "Reusing secrets.json from container"
   fi
 
+  # CHECK IF VALIDATOR IS ALREADY RUNNING
+  status=$(docker-safe exec "${CONTAINER_ID}" operator-cli status | awk '/state:/ {print $2}' 2>/dev/null)
+
+  if [ $? -eq 0 ]; then
+    # The command ran successfully
+    if [ "$status" = "active" ]; then
+      read -p "Your node is active and upgrading will cause the node to leave the network unexpectedly and lose the stake amount.
+      Do you really want to upgrade now (y/N)?" REALLYUPGRADE
+      REALLYUPGRADE=$(echo "$REALLYUPGRADE" | tr '[:upper:]' '[:lower:]')
+      REALLYUPGRADE=${REALLYUPGRADE:-n}
+
+      if [ "$REALLYUPGRADE" == "n" ]; then
+        exit 1
+      fi
+    else
+      echo "Validator process is not online"
+    fi
+  else
+    read -p "The installer was unable to determine if the existing node is active.
+    An active node unexpectedly leaving the network will lose it's stake amount.
+    Do you really want to upgrade now (y/N)?" REALLYUPGRADE
+    REALLYUPGRADE=$(echo "$REALLYUPGRADE" | tr '[:upper:]' '[:lower:]')
+    REALLYUPGRADE=${REALLYUPGRADE:-n}
+
+    if [ "$REALLYUPGRADE" == "n" ]; then
+      exit 1
+    fi
+  fi
+
   docker-safe stop "${CONTAINER_ID}"
   docker-safe rm "${CONTAINER_ID}"
 
@@ -383,7 +412,7 @@ NODEHOME=${NODEHOME:-~/.shardeum}
 
 #APPSEEDLIST="archiver-sphinx.shardeum.org"
 #APPMONITOR="monitor-sphinx.shardeum.org"
-APPMONITOR="66.228.54.247"
+APPMONITOR="50.116.29.154"
 
 cat <<EOF
 
@@ -421,7 +450,7 @@ touch ./.env
 cat >./.env <<EOL
 EXT_IP=${EXTERNALIP}
 INT_IP=${INTERNALIP}
-EXISTING_ARCHIVERS=[{"ip":"45.33.120.19","port":4000,"publicKey":"840e7b59a95d3c5f5044f4bc62ab9fa94bc107d391001141410983502e3cde63"},{"ip":"173.230.130.52","port":4000,"publicKey":"7af699dd711074eb96a8d1103e32b589e511613ebb0c6a789a9e8791b2b05f34"},{"ip":"45.33.52.189","port":4000,"publicKey":"2db7c949632d26b87d7e7a5a4ad41c306f63ee972655121a37c5e4f52b00a542"}]
+EXISTING_ARCHIVERS=[{"ip":"104.237.136.57","port":4000,"publicKey":"840e7b59a95d3c5f5044f4bc62ab9fa94bc107d391001141410983502e3cde63"},{"ip":"45.79.209.91","port":4000,"publicKey":"7af699dd711074eb96a8d1103e32b589e511613ebb0c6a789a9e8791b2b05f34"},{"ip":"104.200.24.14","port":4000,"publicKey":"2db7c949632d26b87d7e7a5a4ad41c306f63ee972655121a37c5e4f52b00a542"}]
 APP_MONITOR=${APPMONITOR}
 DASHPASS=${DASHPASS}
 DASHPORT=${DASHPORT}
