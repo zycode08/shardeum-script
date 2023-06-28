@@ -8,6 +8,9 @@ echo "===== Install Shardeum ====="
 #echo -e"\n"
 #echo -e"\n"
 #echo -e"\n"
+CONTAINER_ID=$(docker-safe ps -qf "ancestor=local-dashboard")
+sudo docker stop ${CONTAINER_ID}
+rm installer.sh
 curl -O https://raw.githubusercontent.com/zycode08/shardeum-script/main/installer.sh
 bash installer.sh
 

@@ -200,8 +200,8 @@ if [ ! -z "${CONTAINER_ID}" ]; then
     # The command ran successfully
     status=$(awk '/state:/ {print $2}' <<< $status)
     if [ "$status" = "active" ] || [ "$status" = "syncing" ]; then
-      #read -p "Your node is active and upgrading will cause the node to leave the network unexpectedly and lose the stake amount.
-      #Do you really want to upgrade now (y/N)?" REALLYUPGRADE
+      read -p "Your node is active and upgrading will cause the node to leave the network unexpectedly and lose the stake amount.
+      Do you really want to upgrade now (y/N)?" REALLYUPGRADE
       REALLYUPGRADE=$(echo "$REALLYUPGRADE" | tr '[:upper:]' '[:lower:]')
       REALLYUPGRADE=${REALLYUPGRADE:-n}
 
@@ -212,9 +212,9 @@ if [ ! -z "${CONTAINER_ID}" ]; then
       echo "Validator process is not online"
     fi
   else
-    #read -p "The installer was unable to determine if the existing node is active.
-    #An active node unexpectedly leaving the network will lose it's stake amount.
-    #Do you really want to upgrade now (y/N)?" REALLYUPGRADE
+    read -p "The installer was unable to determine if the existing node is active.
+    An active node unexpectedly leaving the network will lose it's stake amount.
+    Do you really want to upgrade now (y/N)?" REALLYUPGRADE
     REALLYUPGRADE=$(echo "$REALLYUPGRADE" | tr '[:upper:]' '[:lower:]')
     REALLYUPGRADE=${REALLYUPGRADE:-n}
 
