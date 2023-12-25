@@ -477,7 +477,7 @@ done
 
 #APPSEEDLIST="archiver-sphinx.shardeum.org"
 #APPMONITOR="monitor-sphinx.shardeum.org"
-APPMONITOR="50.116.30.182"
+APPMONITOR="104.200.21.5"
 
 cat <<EOF
 
@@ -515,7 +515,7 @@ touch ./.env
 cat >./.env <<EOL
 EXT_IP=${EXTERNALIP}
 INT_IP=${INTERNALIP}
-EXISTING_ARCHIVERS=[{"ip":"45.79.16.146","port":4000,"publicKey":"840e7b59a95d3c5f5044f4bc62ab9fa94bc107d391001141410983502e3cde63"},{"ip":"45.56.92.103","port":4000,"publicKey":"2db7c949632d26b87d7e7a5a4ad41c306f63ee972655121a37c5e4f52b00a542"},{"ip":"170.187.134.16","port":4000,"publicKey":"7af699dd711074eb96a8d1103e32b589e511613ebb0c6a789a9e8791b2b05f34"}]
+EXISTING_ARCHIVERS=[{"ip":"45.56.68.62","port":4000,"publicKey":"840e7b59a95d3c5f5044f4bc62ab9fa94bc107d391001141410983502e3cde63"},{"ip":"173.255.247.88","port":4000,"publicKey":"2db7c949632d26b87d7e7a5a4ad41c306f63ee972655121a37c5e4f52b00a542"},{"ip":"170.187.154.43","port":4000,"publicKey":"7af699dd711074eb96a8d1103e32b589e511613ebb0c6a789a9e8791b2b05f34"}]
 APP_MONITOR=${APPMONITOR}
 DASHPASS=${DASHPASS}
 DASHPORT=${DASHPORT}
@@ -544,6 +544,8 @@ cat <<EOF
 EOF
 
 cd ${NODEHOME} &&
+mv Dockerfile Dockerfile.bak
+sed '/^RUN apt-get install -y sudo/i RUN apt-get update' Dockerfile.bak > Dockerfile
 docker-safe build --no-cache -t local-dashboard -f Dockerfile --build-arg RUNDASHBOARD=${RUNDASHBOARD} .
 
 cat <<EOF
